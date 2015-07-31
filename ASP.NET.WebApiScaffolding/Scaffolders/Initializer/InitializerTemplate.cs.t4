@@ -1,0 +1,42 @@
+<#@ Template Language="C#" HostSpecific="True" Inherits="DynamicTransform" #>
+<#@ Output Extension="cs" #>
+using System;
+using System.Collections.Generic;
+using System.Data.Entity;
+using System.Linq;
+using System.Web;
+<# if(!string.IsNullOrEmpty(Model.ModelTypeNamespace)) { #>
+using <#= Model.ModelTypeNamespace #>;
+<# } #>
+
+namespace <#= Model.DbContextNamespace #>
+{
+	/*
+	Comment out the relevant line for your project usage
+	*/
+	public class <#= Model.InitializerType #>
+        : System.Data.Entity.DropCreateDatabaseAlways<<#= Model.DbContextType #>>
+        //: System.Data.Entity.DropCreateDatabaseAlways<<#= Model.DbContextType #>>
+        //: System.Data.Entity.DropCreateDatabaseIfModelChanges<<#= Model.DbContextType #>>
+        //: System.Data.Entity.DropCreateDatabaseIfNotExists<<#= Model.DbContextType #>>
+	{
+		protected override void Seed(<#= Model.DbContextType #> context)
+		{
+            //base.Seed(context);
+
+			/*
+			To be fill in by developer
+
+			var students = new List<Student> {
+				new Student {
+					Name = "Foo",
+					Grade = "A",
+				},
+			}
+			
+			students.ForEach(x => context.Students.Add(x));
+			context.SaveChanges();
+			*/
+		}
+    }
+}

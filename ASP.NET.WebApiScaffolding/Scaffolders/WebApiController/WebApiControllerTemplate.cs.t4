@@ -1,0 +1,150 @@
+<#@ template language="C#" HostSpecific="True"  inherits="DynamicTransform" #>
+<#@ Output Extension="cs" #>
+<#@ import namespace="System.Collections" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Text.RegularExpressions" #>
+<#@ import namespace="EnvDTE" #>
+using System;
+using System.Collections.Generic;
+using System.Data.Entity;
+using System.Data.Entity.Infrastructure;
+using System.Linq;
+using System.Net;
+using System.Net.Http;
+using System.Threading.Tasks;
+using System.Web.Http;
+using System.Web.Http.Description;
+<# if(!string.IsNullOrEmpty(Model.ModelTypeNamespace)) { #>
+using <#= Model.ModelTypeNamespace #>;
+<# } #>
+<# if((!string.IsNullOrEmpty(Model.ServicesNamespace)) && (Model.ServicesNamespace != Model.ModelTypeNamespace)) { #>
+using <#= Model.ServicesNamespace #>;
+<# } #>
+
+namespace <#= Model.ControllerNamespace #>
+{   
+	<#  
+		var modelType = (CodeType)Model.ModelType; 
+		var modelName = modelType.Name; 
+		var modelNamePlural = Model.ModelTypePluralized; 
+		var modelVariable = modelName.ToLower(); 
+		var modelVariablePlural = modelNamePlural.ToLower(); 
+		var relatedEntities = ((IEnumerable)Model.RelatedEntities).OfType<RelatedEntityInfo>();
+		var primaryKeyProperty = modelType.VisibleMembers().OfType<CodeProperty>().Single(x => x.Name == Model.PrimaryKey);
+		var routingName = Regex.Replace(Model.ControllerName, "Controller$", "", RegexOptions.IgnoreCase);
+	#>
+
+    public class <#= Model.ControllerName #> : ApiController
+    {
+<# foreach(var service in Services.Values) { #>
+		private readonly I<#= service.ServiceTypeName #> <#= service.VariableName #>;
+<# } #>
+
+		// If you are using Dependency Injection, you can delete the following constructor
+        public <#= Model.ControllerName #>() : this(<#= String.Join(", ", Services.Values.Select(x => "new " + x.ServiceTypeName + "()")) #>)
+        {
+        }
+
+        public <#= Model.ControllerName #>(<#= String.Join(", ", Services.Values.Select(x => "I" + x.ServiceTypeName + " " + x.VariableName)) #>)
+        {
+<# foreach(var service in Services.Values) { #>
+			this.<#= service.VariableName #> = <#= service.VariableName #>;
+<# } #>
+        }
+
+        // GET: api/<#= routingName #>/
+        [ResponseType(typeof(IEnumerable<<#= modelName #>>))]
+        public async Task<IHttpActionResult> Get<#= modelName #>s()
+        {
+<#
+	var propertiesToInclude = relatedEntities.Select(relation => relation.LazyLoadingProperty).Where(x => x != null);
+	var includeExpression = String.Join(", ", propertiesToInclude.Select(x => String.Format("{0} => {0}.{1}", modelVariable, x.Name)));
+	if (!string.IsNullOrEmpty(includeExpression)) {
+		includeExpression = "Including(" + includeExpression + ")";
+	}
+#>
+            return Ok(await <#= Services[modelType.FullName].VariableName #>.Get<#= modelNamePlural #>());
+        }
+
+        // GET: api/<#= routingName #>/5
+        [ResponseType(typeof(<#= modelName #>))]
+        public async Task<IHttpActionResult> Get<#= modelName #>(<#= primaryKeyProperty.Type.AsString #> id)
+        {
+            return Ok(await <#= Services[modelType.FullName].VariableName #>.Get<#= modelName #>(id));
+        }
+
+        // PUT: api/<#= routingName #>/5
+        [ResponseType(typeof(void))]
+        public async Task<IHttpActionResult> Put<#= modelName #>(<#= primaryKeyProperty.Type.AsString #> id, [FromBody] <#= modelName #> <#= modelVariable #>)
+        {
+            if (!ModelState.IsValid) {
+				return BadRequest(ModelState);
+			} else if (id != <#= modelVariable #>.<#= primaryKeyProperty.Name #>) {
+				return BadRequest();
+			}
+
+			await <#= Services[modelType.FullName].VariableName #>.CreateOrUpdate<#= modelName #>(<#= modelVariable #>);
+
+			return StatusCode(HttpStatusCode.NoContent);
+        }
+
+        // POST: api/<#= routingName #>/
+        [ResponseType(typeof(<#= modelName #>))]
+        public async Task<IHttpActionResult> Post<#= modelName #>([FromBody] <#= modelName #> <#= modelVariable #>)
+        {
+            if (!ModelState.IsValid) {
+				return BadRequest(ModelState);
+			}
+
+			await <#= Services[modelType.FullName].VariableName #>.CreateOrUpdate<#= modelName #>(<#= modelVariable #>);
+
+			return CreatedAtRoute("DefaultApi", new { id = <#= modelVariable #>.<#= primaryKeyProperty.Name #> }, <#= modelVariable #>);
+        }
+        
+        // DELETE: api/<#= routingName #>/5
+        [ResponseType(typeof(<#= modelName #>))]
+        public async Task<IHttpActionResult> Delete<#= modelName #>(<#= primaryKeyProperty.Type.AsString #> id)
+        {
+			var <#= modelVariable #> = await <#= Services[modelType.FullName].VariableName #>.Delete<#= modelName #>(id);
+
+			return Ok(<#= modelVariable #>);
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing) {
+<# foreach(var service in Services.Values) { #>
+				<#= service.VariableName #>.Dispose();
+<# } #>
+            }
+            base.Dispose(disposing);
+        }
+    }
+}
+
+<#+
+class ServiceInfo {
+    public string ServiceTypeName { get; set; }
+    public string VariableName { get; set; }
+}
+
+IDictionary<string, ServiceInfo> _services;
+IDictionary<string, ServiceInfo> Services {
+	get {
+		if (_services == null) {
+			var relatedEntities = ((IEnumerable)Model.RelatedEntities).OfType<RelatedEntityInfo>();
+			var relatedTypes = relatedEntities.Where(x => x.RelationType == RelationType.Parent).Select(x => x.RelatedEntityType).Distinct();
+			_services = relatedTypes.ToDictionary(
+				relatedType => relatedType.FullName,
+				relatedType => new ServiceInfo { ServiceTypeName = relatedType.Name + "Service", VariableName = relatedType.Name.ToLower() + "Service" }
+			); 
+			_services[((CodeType)Model.ModelType).FullName] = new ServiceInfo { 
+				ServiceTypeName = Model.Service, 
+				VariableName = ((CodeType)Model.ModelType).Name.ToLower() + "Service" 
+			};
+		}
+		return _services;
+	}
+}
+#>

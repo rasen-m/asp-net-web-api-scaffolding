@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<package>
+  <metadata>
+    <id>ASP.NET.WebApiScaffolding</id>
+    <version>0.4.6</version>
+    <authors>jejekule</authors>
+    <description>
+      A simple package to scaffold WebApi Controllers and Services for Code-First models for ASP.NET Entity Framework.
+    </description>
+    <summary>
+      A simple package to scaffold WebApi Controllers and Services for Code-First models for ASP.NET Entity Framework.
+    </summary>
+    <copyright>Copyright 2015</copyright>
+    <projectUrl>
+      http://github.com/jejekule/ASP.NET.WebApiScaffolding
+    </projectUrl>
+    <dependencies>
+      <dependency id="T4Scaffolding" version="1.0.8" />
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="Scaffolders\**\*.t4" target="tools" />
+    <file src="Scaffolders\**\*.ps1" target="tools" />
+    <file src="install.ps1" target="tools" />
+    <file src="InstallationDummyFile.txt" target="content" />
+    <file src="readme.txt" target="" />
+  </files>
+</package>
