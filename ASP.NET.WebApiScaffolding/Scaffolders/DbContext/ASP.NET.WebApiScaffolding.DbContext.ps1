@@ -5,7 +5,6 @@ param(
 	[string]$Area,
     [string]$Project,
 	[string]$CodeLanguage,
-	[switch]$NoChildItems = $false,
 	[string[]]$TemplateFolders
 )
 
@@ -54,10 +53,6 @@ if (!$foundDbContextType) {
 
 # Add a new property on the DbContext class
 if ($foundDbContextType) {
-	# Attempt to generate Initializer if $NoChildItems is not flagged
-	if (!$NoChildItems) {
-		Scaffold Initializer $foundDbContextType.Name -Area $Area -Project $Project -CodeLanguage $CodeLanguage
-	}
 	$propertyName = Get-PluralizedWord $foundModelType.Name
 
 	# If this is not a DbContext, we can't add a new property, so ensure there is already one

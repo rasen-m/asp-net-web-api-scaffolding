@@ -1,11 +1,17 @@
 [T4Scaffolding.Scaffolder(Description = "Makes a blank Initializer")][CmdletBinding()]
 param(        
-	[parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)][string]$DbContextType,
+	[string]$DbContextType,
 	[string]$Area,
     [string]$Project,
 	[string]$CodeLanguage,
 	[string[]]$TemplateFolders
 )
+
+if (!$DbContextType) {
+	$defaultNamespace = (Get-Project $Project).Properties.Item("DefaultNamespace").Value
+	$DbContextType = $defaultNamespace + "Context"
+	Write-Host "No DbContext provided ... Guessing " $DbContextType
+}
 
 $foundDbContextType = Get-ProjectType $DbContextType -Project $Project -AllowMultiple
 if (!$foundDbContextType) { 
@@ -15,7 +21,6 @@ if (!$foundDbContextType) {
 
 Write-Host "Scaffolding Initializer..."
 
-$defaultNamespace = (Get-Project $Project).Properties.Item("DefaultNamespace").Value
 $foundInitializer = Get-ProjectType ($defaultNamespace + "Initializer") -Project $Project -AllowMultiple
 
 if (!$foundInitializer) {
