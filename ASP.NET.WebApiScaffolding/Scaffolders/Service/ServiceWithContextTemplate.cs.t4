@@ -29,7 +29,7 @@ namespace <#= Model.ServiceNamespace #>
     var isObjectContext = ((CodeType)Model.DbContextType).IsAssignableTo<System.Data.Objects.ObjectContext>();
 	var relatedEntities = ((IEnumerable)Model.RelatedEntities).OfType<RelatedEntityInfo>();
 #>
-    public interface I<#= modelName #>Service : IDisposable
+    public interface I<#= modelName #>Service
     {
         Task<IEnumerable<<#= modelName #>>> Get<#= modelNamePlural #>();
         Task<<#= modelName #>> Get<#= modelName #>(<#= primaryKeyProperty.Type.AsString #> id);
@@ -41,8 +41,27 @@ namespace <#= Model.ServiceNamespace #>
 
     public class <#= modelName #>Service : I<#= modelName #>Service
     {
-        <#= contextName #> context = new <#= contextName #>();
 
+		/* Related entities' services, can be remove if not used */
+<# foreach(var service in Services.Values) { #>
+		private readonly I<#= service.ServiceTypeName #> <#= service.VariableName #>;
+<# } #>
+
+		private <#= contextName #> context;
+
+		/* If you are using Dependency Injection, you can delete the following constructor */
+        public <#= modelName #>Service() : this(<#= String.Join(", ", Services.Values.Select(x => "new " + x.ServiceTypeName + "()")) #>, new <#= contextName #>())
+        {
+        }
+
+        public <#= modelName #>Service(<#= String.Join(", ", Services.Values.Select(x => "I" + x.ServiceTypeName + " " + x.VariableName)) #>, <#= contextName #> context)
+        {
+<# foreach(var service in Services.Values) { #>
+			this.<#= service.VariableName #> = <#= service.VariableName #>;
+<# } #>
+			this.context = context;
+        }
+		
         private IQueryable<<#= modelName #>> All()
         {
             return context.<#= modelNamePlural #>;
@@ -147,3 +166,25 @@ namespace <#= Model.ServiceNamespace #>
         }
     }
 }
+
+<#+
+class ServiceInfo {
+    public string ServiceTypeName { get; set; }
+    public string VariableName { get; set; }
+}
+
+IDictionary<string, ServiceInfo> _services;
+IDictionary<string, ServiceInfo> Services {
+	get {
+		if (_services == null) {
+			var relatedEntities = ((IEnumerable)Model.RelatedEntities).OfType<RelatedEntityInfo>();
+			var relatedTypes = relatedEntities.Where(x => x.RelationType == RelationType.Parent).Select(x => x.RelatedEntityType).Distinct();
+			_services = relatedTypes.ToDictionary(
+				relatedType => relatedType.FullName,
+				relatedType => new ServiceInfo { ServiceTypeName = relatedType.Name + "Service", VariableName = relatedType.Name.ToLower() + "Service" }
+			); 
+		}
+		return _services;
+	}
+}
+#>

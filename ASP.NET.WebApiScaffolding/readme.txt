@@ -5,7 +5,7 @@ Description:
 A simple package to scaffold WebApi Controllers and Services for Code-First models for ASP.NET Entity Framework.  
 
 Command:
-Scaffold WebApiController <ControllerName> [-ModelType] [-Project] [-CodeLanguage] [-DbContextType] [-Area] [-Service] [-NoChildItems] [-TemplateFolders] [-Force] [-ForceMode]
+Scaffold WebApiController <ControllerName> [-ModelType] [-Project] [-CodeLanguage] [-DbContextType] [-Area] [-NoChildItems] [-TemplateFolders] [-Force] [-ForceMode]
 
 Scaffold Service <ModelType> [-Project] [-CodeLanguage] [-DbContextType] [-Area] [-NoChildItems] [-TemplateFolders] [-Force]
 

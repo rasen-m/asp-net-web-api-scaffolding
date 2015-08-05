@@ -6,7 +6,6 @@ param(
 	[string]$CodeLanguage,
 	[string]$DbContextType,
 	[string]$Area,
-	[string]$Service,
 	[switch]$NoChildItems = $false,
 	[string[]]$TemplateFolders,
 	[switch]$Force = $false,
@@ -57,14 +56,11 @@ if(!$DbContextType) {
 
 # Attempt to generate Service and DbContext if $NoChildItems is not flagged
 if (!$NoChildItems) {
-	if (!$Service) {
-		Scaffold Service -ModelType $foundModelType.FullName -DbContextType $DbContextType -Area $Area -Project $Project -CodeLanguage $CodeLanguage -Force:$overwriteFilesExceptController
+	$Repository = false
+	if ($Repository) {
+		Scaffold Service -ModelType $foundModelType.FullName -Repository -DbContextType $DbContextType -Area $Area -Project $Project -CodeLanguage $CodeLanguage -Force:$overwriteFilesExceptController
 	} else {
-		$dbContextScaffolderResult = Scaffold DbContext -ModelType $foundModelType.FullName -DbContextType $DbContextType -Area $Area -Project $Project -CodeLanguage $CodeLanguage
-		$foundDbContextType = $dbContextScaffolderResult.DbContextType
-		if (!$foundDbContextType) { 
-			return 
-		}
+		Scaffold Service -ModelType $foundModelType.FullName -DbContextType $DbContextType -Area $Area -Project $Project -CodeLanguage $CodeLanguage -Force:$overwriteFilesExceptController
 	}
 }
 

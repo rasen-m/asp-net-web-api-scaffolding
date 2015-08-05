@@ -52,10 +52,11 @@
     <None Include="Scaffolders\DbContext\DbContextTemplate.cs.t4" />
     <None Include="Scaffolders\Initializer\ASP.NET.WebApiScaffolding.Initializer.ps1" />
     <None Include="Scaffolders\Initializer\InitializerTemplate.cs.t4" />
+    <None Include="Scaffolders\Service\ASP.NET.WebApiScaffolding.Service.ps1" />
+    <None Include="Scaffolders\Service\ServiceWithRepositoryTemplate.cs.t4" />
     <None Include="Scaffolders\WebApiController\ASP.NET.WebApiScaffolding.WebApiController.ps1" />
     <None Include="Scaffolders\WebApiController\WebApiControllerTemplate.cs.t4" />
-    <None Include="Scaffolders\Service\ASP.NET.WebApiScaffolding.Service.ps1" />
-    <None Include="Scaffolders\Service\ServiceTemplate.cs.t4" />
+    <None Include="Scaffolders\Service\ServiceWithContextTemplate.cs.t4" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="InstallationDummyFile.txt" />
