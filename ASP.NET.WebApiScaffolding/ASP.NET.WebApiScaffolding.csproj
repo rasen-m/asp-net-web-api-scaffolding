@@ -50,6 +50,8 @@
     <None Include="Scaffolders\DbContext\ASP.NET.WebApiScaffolding.DbContext.ps1" />
     <None Include="Scaffolders\DbContext\DbContextEntityMemberTemplate.cs.t4" />
     <None Include="Scaffolders\DbContext\DbContextTemplate.cs.t4" />
+    <None Include="Scaffolders\Repository\ASP.NET.WebApiScaffolding.Repository.ps1" />
+    <None Include="Scaffolders\Repository\RepositoryTemplate.cs.t4" />
     <None Include="Scaffolders\Initializer\ASP.NET.WebApiScaffolding.Initializer.ps1" />
     <None Include="Scaffolders\Initializer\InitializerTemplate.cs.t4" />
     <None Include="Scaffolders\Service\ASP.NET.WebApiScaffolding.Service.ps1" />

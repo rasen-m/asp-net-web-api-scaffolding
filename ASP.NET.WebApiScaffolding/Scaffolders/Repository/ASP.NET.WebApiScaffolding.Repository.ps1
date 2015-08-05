@@ -1,5 +1,4 @@
-
-[T4Scaffolding.Scaffolder(Description = "Create a Service for Model")][CmdletBinding()]
+[T4Scaffolding.Scaffolder(Description = "Create a Repository for Model")][CmdletBinding()]
 param(        
     [parameter(Position = 0, Mandatory = $true, ValueFromPipelineByPropertyName = $true)][string]$ModelType,
     [string]$Project,
@@ -8,7 +7,6 @@ param(
 	[string]$Area,
 	[switch]$NoChildItems = $false,
 	[string[]]$TemplateFolders,
-	[switch]$Repository = $false,
 	[switch]$Force = $false
 )
 
@@ -33,7 +31,7 @@ if(!$DbContextType) {
 }
 
 # File path. The filename extension will be added based on the template's <#@ Output Extension="..." #> directive
-$outputPath = Join-Path Services ($foundModelType.Name + "Service") 
+$outputPath = Join-Path Repositories ($foundModelType.Name + "Repository") 
 
 # Override the default path for the scaffolded file if $Area is provided
 if ($Area) {
@@ -48,15 +46,11 @@ if ($Area) {
 
 # Attempt to generate DbContext if $NoChildItems is not flagged
 if (!$NoChildItems) {
-	if ($Repository) {
-		Scaffold Repository -ModelType $foundModelType.FullName -DbContextType $DbContextType -Area $Area -Project $Project -CodeLanguage $CodeLanguage -Force:$overwriteFilesExceptController
-	} else {
 		$dbContextScaffolderResult = Scaffold DbContext -ModelType $ModelType -DbContextType $DbContextType -Area $Area -Project $Project -CodeLanguage $CodeLanguage
 		$foundDbContextType = $dbContextScaffolderResult.DbContextType
 		if (!$foundDbContextType) { 
 			return 
 		}
-	}
 }
 
 if (!$foundDbContextType) { 
@@ -71,30 +65,29 @@ if (!$foundDbContextType) {
 $repositoryName = $foundModelType.Name + "Repository"
 $modelTypePluralized = Get-PluralizedWord $foundModelType.Name
 $namespace = (Get-Project $Project).Properties.Item("DefaultNamespace").Value
-$serviceNamespace = [T4Scaffolding.Namespaces]::Normalize($namespace + "." + [System.IO.Path]::GetDirectoryName($outputPath).Replace([System.IO.Path]::DirectorySeparatorChar, "."))
-$repositoryNamespace = $namespace + ".Repositories"
 $modelTypeNamespace = [T4Scaffolding.Namespaces]::GetNamespace($foundModelType.FullName)
+$repositoryName = $foundModelType.Name + "Repository"
+$repositoryNamespace = [T4Scaffolding.Namespaces]::Normalize($namespace + "." + [System.IO.Path]::GetDirectoryName($outputPath).Replace([System.IO.Path]::DirectorySeparatorChar, "."))
 $relatedEntities = [Array](Get-RelatedEntities $foundModelType.FullName -Project $project)
 if (!$relatedEntities) { 
 	$relatedEntities = @() 
 }
-$templateName = if($Repository) { "ServiceWithRepositoryTemplate" } else { "ServiceWithContextTemplate" }
 
 Add-ProjectItemViaTemplate $outputPath `
-	-Template $templateName `
+	-Template RepositoryTemplate `
 	-Model @{ 
 		ModelType = [MarshalByRefObject]$foundModelType;
 		PrimaryKey = [string]$primaryKey;
 		Namespace = $namespace; 
-		ServiceNamespace = $serviceNamespace; 
+		RepositoryNamespace = $repositoryNamespace;
 		ModelTypeNamespace = $modelTypeNamespace; 
 		ModelTypePluralized = [string]$modelTypePluralized; 
-		RepositoryNamespace = $repositoryNamespace;
+		Repository = $repositoryName; 
 		DbContextNamespace = $foundDbContextType.Namespace.FullName;
 		DbContextType = [MarshalByRefObject]$foundDbContextType;
 		RelatedEntities = $relatedEntities;
 	} `
-	-SuccessMessage "Added Service output at {0}" `
+	-SuccessMessage "Added Repository output at {0}" `
 	-TemplateFolders $TemplateFolders `
 	-Project $Project `
 	-CodeLanguage $CodeLanguage `

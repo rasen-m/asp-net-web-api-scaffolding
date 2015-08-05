@@ -1,4 +1,3 @@
-
 <#@ template language="C#" HostSpecific="True"  inherits="DynamicTransform" #>
 <#@ assembly name="System.Data.Entity" #>
 <#@ import namespace="System.Linq" #>
@@ -13,11 +12,12 @@ using System.Data.Entity;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Web;
-<# foreach(var ns in new[] { Model.ModelTypeNamespace, Model.DbContextNamespace }.Where(x => !string.IsNullOrEmpty(x) && (x != Model.ServiceNamespace)).Distinct()) { #>
+using System.Threading.Tasks;
+<# foreach(var ns in new[] { Model.ModelTypeNamespace, Model.DbContextNamespace }.Where(x => !string.IsNullOrEmpty(x) && (x != Model.RepositoryNamespace)).Distinct()) { #>
 using <#= ns #>;
 <# } #>
 
-namespace <#= Model.ServiceNamespace #>
+namespace <#= Model.RepositoryNamespace #>
 { 
 <# 
     var modelType = (CodeType)Model.ModelType; 
@@ -30,37 +30,24 @@ namespace <#= Model.ServiceNamespace #>
     var isObjectContext = ((CodeType)Model.DbContextType).IsAssignableTo<System.Data.Objects.ObjectContext>();
 	var relatedEntities = ((IEnumerable)Model.RelatedEntities).OfType<RelatedEntityInfo>();
 #>
-    public interface I<#= modelName #>Service
+    public interface I<#= modelName #>Repository: IDisposable
     {
         Task<IEnumerable<<#= modelName #>>> Get<#= modelNamePlural #>();
         Task<<#= modelName #>> Get<#= modelName #>(<#= primaryKeyProperty.Type.AsString #> id);
         Task<<#= modelName #>> Update<#= modelName #>(<#= primaryKeyProperty.Type.AsString #> id, <#= modelName #> <#= modelVariable #>);
         Task<<#= modelName #>> Create<#= modelName #>(<#= modelName #> <#= modelVariable #>);
-        Task<<#= modelName #>> CreateOrUpdate<#= modelName #>(<#= modelName #> <#= modelVariable #>);
         Task<<#= modelName #>> Delete<#= modelName #>(<#= primaryKeyProperty.Type.AsString #> id);
     }
 
-    public class <#= modelName #>Service : I<#= modelName #>Service
+    public class <#= modelName #>Repository : I<#= modelName #>Repository
     {
-
-		/* Related entities' services, can be remove if not used */
-<# foreach(var service in Services.Values) { #>
-		private readonly I<#= service.ServiceTypeName #> <#= service.VariableName #>;
-<# } #>
-
 		private <#= contextName #> context;
 
 <#  
     var dependencies = contextName + " context"; 
-    if (Services.Count > 0) { 
-        dependencies = dependencies + ", " + String.Join(", ", Services.Values.Select(x => "I" + x.ServiceTypeName + " " + x.VariableName));
-    }
 #>
-        public <#= modelName #>Service(<#= dependencies #>)
+        public <#= modelName #>Repository(<#= dependencies #>)
         {
-<# foreach(var service in Services.Values) { #>
-			this.<#= service.VariableName #> = <#= service.VariableName #>;
-<# } #>
 			this.context = context;
         }
 		
@@ -107,10 +94,10 @@ namespace <#= Model.ServiceNamespace #>
         public async Task<<#= modelName #>> Update<#= modelName #>(<#= primaryKeyProperty.Type.AsString #> id, <#= modelName #> <#= modelVariable #>)
         {
 <# if(isObjectContext) { #>
-                context.<#= modelNamePlural #>.Attach(<#= modelVariable #>);
-                context.ObjectStateManager.ChangeObjectState(<#= modelVariable #>, EntityState.Modified);
+			context.<#= modelNamePlural #>.Attach(<#= modelVariable #>);
+            context.ObjectStateManager.ChangeObjectState(<#= modelVariable #>, EntityState.Modified);
 <# } else { #>
-                context.Entry(<#= modelVariable #>).State = EntityState.Modified;
+            context.Entry(<#= modelVariable #>).State = EntityState.Modified;
 <# } #>
 
             await context.SaveChangesAsync();
@@ -135,19 +122,6 @@ namespace <#= Model.ServiceNamespace #>
 			return <#= modelVariable #>;
         }
 
-        public async Task<<#= modelName #>> CreateOrUpdate<#= modelName #>(<#= modelName #> <#= modelVariable #>)
-        {
-            if (<#= modelVariable #>.<#= Model.PrimaryKey #> != default(<#= primaryKeyProperty.Type.AsString #>)) {
-				// New entity
-				<#= modelVariable #> = await this.Create<#= modelName #>(<#= modelVariable #>);
-            } else {
-                // Existing entity
-				<#= modelVariable #> = await this.Update<#= modelName #>(<#= modelVariable #>.<#= Model.PrimaryKey #>, <#= modelVariable #>);
-            }
-
-			return <#= modelVariable #>;
-        }
-
         public async Task<<#= modelName #>> Delete<#= modelName #>(<#= primaryKeyProperty.Type.AsString #> id)
         {
 <# if(isObjectContext) { #>
@@ -168,25 +142,3 @@ namespace <#= Model.ServiceNamespace #>
         }
     }
 }
-
-<#+
-class ServiceInfo {
-    public string ServiceTypeName { get; set; }
-    public string VariableName { get; set; }
-}
-
-IDictionary<string, ServiceInfo> _services;
-IDictionary<string, ServiceInfo> Services {
-	get {
-		if (_services == null) {
-			var relatedEntities = ((IEnumerable)Model.RelatedEntities).OfType<RelatedEntityInfo>();
-			var relatedTypes = relatedEntities.Where(x => x.RelationType == RelationType.Parent).Select(x => x.RelatedEntityType).Distinct();
-			_services = relatedTypes.ToDictionary(
-				relatedType => relatedType.FullName,
-				relatedType => new ServiceInfo { ServiceTypeName = relatedType.Name + "Service", VariableName = relatedType.Name.ToLower() + "Service" }
-			); 
-		}
-		return _services;
-	}
-}
-#>

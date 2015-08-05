@@ -13,3 +13,5 @@ Set-DefaultScaffolder -Name WebApiController -Scaffolder ASP.NET.WebApiScaffoldi
 Set-DefaultScaffolder -Name Initializer -Scaffolder ASP.NET.WebApiScaffolding.Initializer -SolutionWide -DoNotOverwriteExistingSetting
 
 Set-DefaultScaffolder -Name DbContext -Scaffolder ASP.NET.WebApiScaffolding.DbContext
+
+Set-DefaultScaffolder -Name Repository -Scaffolder ASP.NET.WebApiScaffolding.Repository

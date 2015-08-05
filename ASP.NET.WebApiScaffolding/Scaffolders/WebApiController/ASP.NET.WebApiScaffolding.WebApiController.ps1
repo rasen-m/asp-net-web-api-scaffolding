@@ -8,6 +8,7 @@ param(
 	[string]$Area,
 	[switch]$NoChildItems = $false,
 	[string[]]$TemplateFolders,
+	[switch]$Repository = $false,
 	[switch]$Force = $false,
 	[string]$ForceMode
 )
@@ -56,7 +57,6 @@ if(!$DbContextType) {
 
 # Attempt to generate Service and DbContext if $NoChildItems is not flagged
 if (!$NoChildItems) {
-	$Repository = false
 	if ($Repository) {
 		Scaffold Service -ModelType $foundModelType.FullName -Repository -DbContextType $DbContextType -Area $Area -Project $Project -CodeLanguage $CodeLanguage -Force:$overwriteFilesExceptController
 	} else {
