@@ -98,20 +98,20 @@ Alternatively, you can add the `-Repository` flag to generate boiletplates based
 Folder Structure
 ----------------
 ```
-Project\
+Project/
     ...
-	Controllers\
+	Controllers/
 		StudentController.cs
 		CourseController.cs
 		...
-	DataAccessLayer\
+	DataAccessLayer/
 		ProjectContext.cs
 		ProjectInitializer.cs
-	Repositories\
+	Repositories/
 		StudentRepository.cs
 		CourseRepository.cs
 		...
-	Services\
+	Services/
 		StudentService.cs
 		CourseService.cs
 		...
@@ -132,11 +132,11 @@ Scaffold CustomScaffolder Foo
 
 A folder will be generated:
 ```
-Project\
+Project/
     ...
-	CodeTemplates\
-        Scaffolders\
-            Foo\
+	CodeTemplates/
+        Scaffolders/
+            Foo/
                 Foo.ps1
                 FooTemplate.cs.t4
     ...
@@ -158,11 +158,11 @@ Scaffold CustomTemplate WebApiController WebApiControllerTemplate
 
 A folder will be generated:
 ```
-Project\
+Project/
     ...
-	CodeTemplates\
-        Scaffolders\
-            WebApiController\
+	CodeTemplates/
+        Scaffolders/
+            WebApiController/
                 WebApiControllerTemplate.cs.t4
     ...
 	
@@ -176,9 +176,9 @@ Scaffold WebApiController <parameters> [flags]
 
 Troubleshoot
 ------------
-**The 'ObjectContent`1' type failed to serialize the response body for content type 'application/xml; charset=utf-8'.**
+**The 'ObjectContent`1' type failed to serialize the response body for content type 'application\xml; charset=utf-8'.**
 
-If you are getting this exception message, add the following snippet into `App_Start\WebApiConfig.cs` > `Register()`, restart.
+If you are getting this exception message, add the following snippet into `App_Start/WebApiConfig.cs` > `Register()`, restart.
 ```c#
 var json = config.Formatters.JsonFormatter;
 json.SerializerSettings.PreserveReferencesHandling = Newtonsoft.Json.PreserveReferencesHandling.Objects;
