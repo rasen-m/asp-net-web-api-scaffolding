@@ -1,4 +1,3 @@
-
 [T4Scaffolding.Scaffolder(Description = "Create a Service for Model")][CmdletBinding()]
 param(        
     [parameter(Position = 0, Mandatory = $true, ValueFromPipelineByPropertyName = $true)][string]$ModelType,
@@ -49,7 +48,7 @@ if ($Area) {
 # Attempt to generate DbContext if $NoChildItems is not flagged
 if (!$NoChildItems) {
 	if ($Repository) {
-		Scaffold Repository -ModelType $foundModelType.FullName -DbContextType $DbContextType -Area $Area -Project $Project -CodeLanguage $CodeLanguage -Force:$overwriteFilesExceptController
+		Scaffold Repository -ModelType $foundModelType.FullName -DbContextType $DbContextType -Area $Area -Project $Project -CodeLanguage $CodeLanguage -Force:$Force
 	} else {
 		$dbContextScaffolderResult = Scaffold DbContext -ModelType $ModelType -DbContextType $DbContextType -Area $Area -Project $Project -CodeLanguage $CodeLanguage
 		$foundDbContextType = $dbContextScaffolderResult.DbContextType

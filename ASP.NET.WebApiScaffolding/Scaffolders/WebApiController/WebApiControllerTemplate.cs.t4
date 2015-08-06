@@ -41,6 +41,11 @@ namespace <#= Model.ControllerNamespace #>
 		private readonly I<#= service.ServiceTypeName #> <#= service.VariableName #>;
 <# } #>
 
+		/* If you are using Dependency Injection, you can delete the following constructor */
+        public <#= Model.ControllerName #>() : this(<#= String.Join(", ", Services.Values.Select(x => "new " + x.ServiceTypeName + "()")) #>)
+        {
+        }
+
         public <#= Model.ControllerName #>(<#= String.Join(", ", Services.Values.Select(x => "I" + x.ServiceTypeName + " " + x.VariableName)) #>)
         {
 <# foreach(var service in Services.Values) { #>

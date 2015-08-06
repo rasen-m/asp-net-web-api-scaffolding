@@ -1,4 +1,3 @@
-
 <#@ template language="C#" HostSpecific="True"  inherits="DynamicTransform" #>
 <#@ assembly name="System.Data.Entity" #>
 <#@ import namespace="System.Linq" #>
@@ -51,7 +50,18 @@ namespace <#= Model.ServiceNamespace #>
 		private <#= contextName #> context;
 
 <#  
-    var dependencies = contextName + " context"; 
+    var dependencies = "new " + contextName + "()"; 
+    if (Services.Count > 0) { 
+        dependencies = dependencies + ", " + String.Join(", new ", Services.Values.Select(x => x.ServiceTypeName + "()"));
+    }
+#>
+		/* If you are using Dependency Injection, you can delete the following constructor */
+        public <#= modelName #>Service() : this(<#= dependencies #>) 
+        {
+        }
+
+<#  
+    dependencies = contextName + " context"; 
     if (Services.Count > 0) { 
         dependencies = dependencies + ", " + String.Join(", ", Services.Values.Select(x => "I" + x.ServiceTypeName + " " + x.VariableName));
     }
