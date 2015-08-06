@@ -174,8 +174,22 @@ Scaffold WebApiController <parameters> [flags]
 ```
 
 
-[0]: http://www.nuget.org/packages/T4Scaffolding/
+####Troubleshoot
+**The 'ObjectContent`1' type failed to serialize the response body for content type 'application/xml; charset=utf-8'.**
+
+If you are getting this exception message, add the following snippet into `App_Start\WebApiConfig.cs` > `Register()`, restart.
+```
+var json = config.Formatters.JsonFormatter;
+json.SerializerSettings.PreserveReferencesHandling = Newtonsoft.Json.PreserveReferencesHandling.Objects;
+config.Formatters.Remove(config.Formatters.XmlFormatter);
+```
+
+####Notes
+The package is inspired by [MvcScaffolding][5]. It can be view as a Web API, asynchronous version but with some opinionated perspective in terms of the layers and folder structures. 
+
+[0]: https://www.nuget.org/packages/T4Scaffolding/
 [1]: https://www.nuget.org/packages/ASP.NET.WebApiScaffolding/
 [2]: https://www.nuget.org/packages/ASP.NET.WebApiScaffolding/
 [3]: https://en.wikipedia.org/wiki/Service_layers_pattern
 [4]: https://msdn.microsoft.com/en-us/library/ff649690.aspx
+[5]: https://www.nuget.org/packages/MvcScaffolding/
