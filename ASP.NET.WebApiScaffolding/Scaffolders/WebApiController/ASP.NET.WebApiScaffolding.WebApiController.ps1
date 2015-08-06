@@ -10,13 +10,8 @@ param(
 	[string[]]$TemplateFolders,
 	[switch]$Repository = $false,
 	[switch]$Force = $false,
-	[string]$ForceMode
 )
  
-# Interpret the "Force" and "ForceMode" options
-$overwriteController = $Force -and ((!$ForceMode) -or ($ForceMode -eq "ControllerOnly"))
-$overwriteFilesExceptController = $Force -and ((!$ForceMode) -or ($ForceMode -eq "PreserveController"))
-
 # If you haven't specified a model type, we'll guess from the controller name
 if (!$ModelType) {
 	if ($ControllerName.EndsWith("Controller", [StringComparison]::OrdinalIgnoreCase)) {
@@ -58,9 +53,9 @@ if(!$DbContextType) {
 # Attempt to generate Service and DbContext if $NoChildItems is not flagged
 if (!$NoChildItems) {
 	if ($Repository) {
-		Scaffold Service -ModelType $foundModelType.FullName -Repository -DbContextType $DbContextType -Area $Area -Project $Project -CodeLanguage $CodeLanguage -Force:$overwriteFilesExceptController
+		Scaffold Service -ModelType $foundModelType.FullName -Repository -DbContextType $DbContextType -Area $Area -Project $Project -CodeLanguage $CodeLanguage -Force:$Force
 	} else {
-		Scaffold Service -ModelType $foundModelType.FullName -DbContextType $DbContextType -Area $Area -Project $Project -CodeLanguage $CodeLanguage -Force:$overwriteFilesExceptController
+		Scaffold Service -ModelType $foundModelType.FullName -DbContextType $DbContextType -Area $Area -Project $Project -CodeLanguage $CodeLanguage -Force:$Force
 	}
 }
 

@@ -99,6 +99,7 @@ Folder Structure
 ----------------
 ```
 Project\
+    ...
 	Controllers\
 		StudentController.cs
 		CourseController.cs
@@ -114,12 +115,63 @@ Project\
 		StudentService.cs
 		CourseService.cs
 		...
+    ...
 ```
 
+Customization
+-------------
+Since the package is built on top of [T4Scaffolding][0], we can leverage the `CustomScaffolder` and `CustomTemplate` that T4Scaffolding provides. 
 
-Additional Notes
-----------------
-- The package is built on top of [T4Scaffolding][0], therefore most of the features and flags of T4Scaffolding are also available. Most notably, **CustomScaffolder** and **CustomTemplate**.
+####Custom Scaffolder
+Custom scaffolder allows us to create custom boiletplate scaffolder so that we can generate the same boiletplate easily.
+
+To generate a custom scaffolder call `Foo`:
+```
+Scaffold CustomScaffolder Foo
+```
+
+A folder will be generated:
+```
+Project\
+    ...
+	CodeTemplates\
+        Scaffolders\
+            Foo\
+                Foo.ps1
+                FooTemplate.cs.t4
+    ...
+	
+```
+
+You can now customize the `Foo.ps1` and `FooTemplate.cs.t4` to your needs. To use your newly created custom scaffolder, run:
+```
+Scaffold Foo <parameters> [flags]
+```
+
+####Custom Template
+Custom templates allows us to reuse the existing scaffolders that comes with T4Scaffolding and AWAS but with a template style of your choice. 
+
+To generate a custom Template for `WebApiController`:
+```
+Scaffold CustomTemplate WebApiController WebApiControllerTemplate
+```
+
+A folder will be generated:
+```
+Project\
+    ...
+	CodeTemplates\
+        Scaffolders\
+            WebApiController\
+                WebApiControllerTemplate.cs.t4
+    ...
+	
+```
+
+You can now customize `WebApiControllerTemplate.cs.t4` to your needs. As long as the custom template exists in the folder, the package will use your template for all WebApiController scaffolded:
+```
+Scaffold WebApiController <parameters> [flags]
+```
 
 
 [0]: http://www.nuget.org/packages/T4Scaffolding/
