@@ -64,14 +64,27 @@ namespace <#= Model.ServiceNamespace #>
 			return await <#= modelRepositoryVariable #>.Get<#= modelName #>(id);
         }
 
-        public async Task<<#= modelName #>> Update<#= modelName #>(<#= modelName #> <#= modelVariable #>)
+        public async Task<<#= modelName #>> Update<#= modelName #>(<#= primaryKeyProperty.Type.AsString #> id, <#= modelName #> <#= modelVariable #>)
         {
-			return await <#= modelRepositoryVariable #>.Update<#= modelName #>(<#= modelVariable #>);
+			return await <#= modelRepositoryVariable #>.Update<#= modelName #>(id, <#= modelVariable #>);
         }
 
         public async Task<<#= modelName #>> Create<#= modelName #>(<#= modelName #> <#= modelVariable #>)
         {
 			return await <#= modelRepositoryVariable #>.Create<#= modelName #>(<#= modelVariable #>);
+        }
+
+        public async Task<<#= modelName #>> CreateOrUpdate<#= modelName #>(<#= modelName #> <#= modelVariable #>)
+        {
+            if (<#= modelVariable #>.<#= Model.PrimaryKey #> != default(<#= primaryKeyProperty.Type.AsString #>)) {
+				// New entity
+				<#= modelVariable #> = await this.Create<#= modelName #>(<#= modelVariable #>);
+            } else {
+                // Existing entity
+				<#= modelVariable #> = await this.Update<#= modelName #>(<#= modelVariable #>.<#= Model.PrimaryKey #>, <#= modelVariable #>);
+            }
+
+			return <#= modelVariable #>;
         }
 
         public async Task<<#= modelName #>> Delete<#= modelName #>(<#= primaryKeyProperty.Type.AsString #> id)

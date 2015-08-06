@@ -117,10 +117,10 @@ namespace <#= Model.ServiceNamespace #>
         public async Task<<#= modelName #>> Update<#= modelName #>(<#= primaryKeyProperty.Type.AsString #> id, <#= modelName #> <#= modelVariable #>)
         {
 <# if(isObjectContext) { #>
-                context.<#= modelNamePlural #>.Attach(<#= modelVariable #>);
-                context.ObjectStateManager.ChangeObjectState(<#= modelVariable #>, EntityState.Modified);
+			context.<#= modelNamePlural #>.Attach(<#= modelVariable #>);
+            context.ObjectStateManager.ChangeObjectState(<#= modelVariable #>, EntityState.Modified);
 <# } else { #>
-                context.Entry(<#= modelVariable #>).State = EntityState.Modified;
+            context.Entry(<#= modelVariable #>).State = EntityState.Modified;
 <# } #>
 
             await context.SaveChangesAsync();
