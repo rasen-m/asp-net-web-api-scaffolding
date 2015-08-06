@@ -34,7 +34,7 @@ namespace <#= Model.RepositoryNamespace #>
     {
         Task<IEnumerable<<#= modelName #>>> Get<#= modelNamePlural #>();
         Task<<#= modelName #>> Get<#= modelName #>(<#= primaryKeyProperty.Type.AsString #> id);
-        Task<<#= modelName #>> Update<#= modelName #>(<#= primaryKeyProperty.Type.AsString #> id, <#= modelName #> <#= modelVariable #>);
+        Task<<#= modelName #>> Update<#= modelName #>(<#= modelName #> <#= modelVariable #>);
         Task<<#= modelName #>> Create<#= modelName #>(<#= modelName #> <#= modelVariable #>);
         Task<<#= modelName #>> Delete<#= modelName #>(<#= primaryKeyProperty.Type.AsString #> id);
     }
@@ -91,7 +91,7 @@ namespace <#= Model.RepositoryNamespace #>
 			return await this.Find(id);	
         }
 
-        public async Task<<#= modelName #>> Update<#= modelName #>(<#= primaryKeyProperty.Type.AsString #> id, <#= modelName #> <#= modelVariable #>)
+        public async Task<<#= modelName #>> Update<#= modelName #>(<#= modelName #> <#= modelVariable #>)
         {
 <# if(isObjectContext) { #>
 			context.<#= modelNamePlural #>.Attach(<#= modelVariable #>);

@@ -30,7 +30,7 @@ namespace <#= Model.ServiceNamespace #>
     var isObjectContext = ((CodeType)Model.DbContextType).IsAssignableTo<System.Data.Objects.ObjectContext>();
 	var relatedEntities = ((IEnumerable)Model.RelatedEntities).OfType<RelatedEntityInfo>();
 #>
-    public interface I<#= modelName #>Service
+    public interface I<#= modelName #>Service: IDisposable
     {
         Task<IEnumerable<<#= modelName #>>> Get<#= modelNamePlural #>();
         Task<<#= modelName #>> Get<#= modelName #>(<#= primaryKeyProperty.Type.AsString #> id);
