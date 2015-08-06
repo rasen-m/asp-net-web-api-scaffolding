@@ -179,7 +179,7 @@ Troubleshoot
 **The 'ObjectContent`1' type failed to serialize the response body for content type 'application/xml; charset=utf-8'.**
 
 If you are getting this exception message, add the following snippet into `App_Start\WebApiConfig.cs` > `Register()`, restart.
-```
+```c#
 var json = config.Formatters.JsonFormatter;
 json.SerializerSettings.PreserveReferencesHandling = Newtonsoft.Json.PreserveReferencesHandling.Objects;
 config.Formatters.Remove(config.Formatters.XmlFormatter);
