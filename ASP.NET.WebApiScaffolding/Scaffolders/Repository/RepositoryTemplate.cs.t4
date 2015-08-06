@@ -43,10 +43,12 @@ namespace <#= Model.RepositoryNamespace #>
     {
 		private <#= contextName #> context;
 
-<#  
-    var dependencies = contextName + " context"; 
-#>
-        public <#= modelName #>Repository(<#= dependencies #>)
+		/* If you are using Dependency Injection, you can delete the following constructor */
+        public <#= modelName #>Repository(): this(new <#= contextName #>())
+        {
+        }
+
+        public <#= modelName #>Repository(<#= contextName #> context)
         {
 			this.context = context;
         }

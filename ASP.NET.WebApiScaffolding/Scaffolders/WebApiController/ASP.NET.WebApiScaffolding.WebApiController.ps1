@@ -9,7 +9,7 @@ param(
 	[switch]$NoChildItems = $false,
 	[string[]]$TemplateFolders,
 	[switch]$Repository = $false,
-	[switch]$Force = $false,
+	[switch]$Force = $false
 )
  
 # If you haven't specified a model type, we'll guess from the controller name

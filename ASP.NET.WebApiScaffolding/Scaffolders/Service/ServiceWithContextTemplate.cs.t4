@@ -52,7 +52,7 @@ namespace <#= Model.ServiceNamespace #>
 <#  
     var dependencies = "new " + contextName + "()"; 
     if (Services.Count > 0) { 
-        dependencies = dependencies + ", " + String.Join(", new ", Services.Values.Select(x => x.ServiceTypeName + "()"));
+        dependencies = dependencies + ", " + String.Join(", ", Services.Values.Select(x => "new " + x.ServiceTypeName + "()"));
     }
 #>
 		/* If you are using Dependency Injection, you can delete the following constructor */
