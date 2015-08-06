@@ -193,8 +193,8 @@ The package is inspired by [MvcScaffolding][5]. It can be view as a Web API, asy
 
 
 [0]: https://www.nuget.org/packages/T4Scaffolding/
-[1]: https://www.nuget.org/packages/ASP.NET.WebApiScaffolding/
+[1]: https://github.com/jejekule/ASP.NET.WebApiScaffolding
 [2]: https://www.nuget.org/packages/ASP.NET.WebApiScaffolding/
-[3]: https://en.wikipedia.org/wiki/Service_layers_pattern
+[3]: http://martinfowler.com/eaaCatalog/serviceLayer.html
 [4]: https://msdn.microsoft.com/en-us/library/ff649690.aspx
 [5]: https://www.nuget.org/packages/MvcScaffolding/
