@@ -2,7 +2,7 @@
 <package>
   <metadata>
     <id>ASP.NET.WebApiScaffolding</id>
-    <version>0.5.6</version>
+    <version>0.5.8</version>
     <authors>jejekule</authors>
     <description>
       A simple package to scaffold WebApi Controllers and Services for Code-First models for ASP.NET Entity Framework.
