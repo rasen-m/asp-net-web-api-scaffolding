@@ -147,7 +147,7 @@ namespace <#= Model.ServiceNamespace #>
 
         public async Task<<#= modelName #>> CreateOrUpdate<#= modelName #>(<#= modelName #> <#= modelVariable #>)
         {
-            if (<#= modelVariable #>.<#= Model.PrimaryKey #> != default(<#= primaryKeyProperty.Type.AsString #>)) {
+            if (<#= modelVariable #>.<#= Model.PrimaryKey #> == default(<#= primaryKeyProperty.Type.AsString #>)) {
 				// New entity
 				<#= modelVariable #> = await this.Create<#= modelName #>(<#= modelVariable #>);
             } else {
