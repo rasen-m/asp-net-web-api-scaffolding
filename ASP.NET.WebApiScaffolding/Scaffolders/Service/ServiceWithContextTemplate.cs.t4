@@ -130,7 +130,7 @@ namespace <#= Model.ServiceNamespace #>
         public async Task<<#= modelName #>> Create<#= modelName #>(<#= modelName #> <#= modelVariable #>)
         {
             // New entity
-            if (<#= modelVariable #>.<#= Model.PrimaryKey #> != default(<#= primaryKeyProperty.Type.AsString #>)) {
+            if (<#= modelVariable #>.<#= Model.PrimaryKey #> == default(<#= primaryKeyProperty.Type.AsString #>)) {
 <# if(primaryKeyProperty.Type.AsString == "System.Guid") { #>
                 <#= modelVariable #>.<#= primaryKeyProperty.Name #> = Guid.NewGuid();
 <# } #>
