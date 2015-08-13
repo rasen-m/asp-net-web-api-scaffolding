@@ -174,6 +174,29 @@ Scaffold WebApiController <parameters> [flags]
 ```
 
 
+Useful Commands
+---------------
+```
+Scaffold CustomTemplate WebApiController WebApiControllerTemplate
+Scaffold CustomTemplate Service ServiceWithContextTemplate
+Scaffold CustomTemplate Service ServiceWithRepositoryTemplate
+Scaffold CustomTemplate Repository RepositoryTemplate
+Scaffold CustomTemplate Initializer InitializerTemplate
+Scaffold CustomTemplate DbContext DbContextTemplate
+Scaffold CustomTemplate DbContext DbContextEntityMemberTemplate
+```
+
+
+Useful Resources 
+---------------
+Some of the resources I used along the way...
+
+- [Code First Conventions][6]
+- You can use [.NET Data Annotation][7] to customize/override CodeFirst convention. In particular, the primary key.
+- [T4Scaffolding tutorial][8]
+
+
+
 Troubleshoot
 ------------
 **The 'ObjectContent`1' type failed to serialize the response body for content type 'application\xml; charset=utf-8'.**
@@ -198,3 +221,6 @@ The package is inspired by [MvcScaffolding][5]. It can be view as a Web API, asy
 [3]: http://martinfowler.com/eaaCatalog/serviceLayer.html
 [4]: https://msdn.microsoft.com/en-us/library/ff649690.aspx
 [5]: https://www.nuget.org/packages/MvcScaffolding/
+[6]: https://msdn.microsoft.com/en-ca/data/jj679962.aspx
+[7]: https://msdn.microsoft.com/en-us/library/system.componentmodel.dataannotations(v=vs.95).aspx
+[8]: https://www.youtube.com/watch?v=6hrD5MAXuIg
